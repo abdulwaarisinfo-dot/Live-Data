@@ -57,11 +57,12 @@ class Store:
         return {d["job_key"] for d in self.runs.find(q, {"job_key": 1})}
 
     # ── claims ───────────────────────────────────────────────────────────
-    def claim(self, job: dict, slot: int, round_no: int) -> bool:
-        """Atomic: only ONE worker/instance ever owns a job request. Also re-takes failed (attempts left) and stale runs."""
-        key, now = job_key(job), now_utc()
-        doc = {"job_key": key, "topic_key": job.get("topic_key"), "requested_at": job.get("requested_at"),
-               "status": "claimed", "slot": slot, "round": round_no, "attempts": 1,
+    def claim(self, unit, slot: int) -> bool:
+        """Atomic: only ONE worker/instance ever owns a unit. Also re-takes failed (attempts left) and stale runs."""
+        key, now = unit.key, now_utc()
+        doc = {"job_key": key, "topic_key": unit.topic_key, "requested_at": unit.job.get("requested_at"),
+               "part": unit.part, "parts": unit.parts, "keywords_count": len(unit.keywords),
+               "status": "claimed", "slot": slot, "attempts": 1,
                "claimed_at": now, "heartbeat_at": now, "finished_at": None,
                "serp_calls": 0, "results": 0, "new_posts": 0, "error": None}
         try:
@@ -76,8 +77,7 @@ class Store:
                 {"status": {"$in": ["claimed", "processing"]}, "heartbeat_at": {"$lt": stale},
                  "attempts": {"$lt": self.s.max_attempts}},
             ]},
-            {"$set": {"status": "claimed", "slot": slot, "round": round_no, "claimed_at": now,
-                      "heartbeat_at": now, "error": None},
+            {"$set": {"status": "claimed", "slot": slot, "claimed_at": now, "heartbeat_at": now, "error": None},
              "$inc": {"attempts": 1}})
         return res is not None
 
