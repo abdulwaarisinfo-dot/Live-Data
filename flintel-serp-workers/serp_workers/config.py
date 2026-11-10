@@ -41,7 +41,9 @@ class Settings:
     job_max_age_hours: float = 24.0
     job_platforms: tuple = ("all", "reddit")
     keywords_per_call: int = 2
-    max_keywords_per_job: int = 20
+    keywords_per_part: int = 20
+    max_keywords_per_job: int = 1000
+    report_seconds: float = 30.0
     results_per_keyword: int = 10
     max_attempts: int = 3
     stale_seconds: int = 600
@@ -91,7 +93,9 @@ def load_settings() -> Settings:
         job_max_age_hours=_f("JOB_MAX_AGE_HOURS", 24),
         job_platforms=platforms or ("all", "reddit"),
         keywords_per_call=max(1, _i("KEYWORDS_PER_CALL", 2)),
-        max_keywords_per_job=max(1, _i("MAX_KEYWORDS_PER_JOB", 20)),
+        keywords_per_part=max(1, _i("KEYWORDS_PER_PART", 20)),
+        max_keywords_per_job=max(1, _i("MAX_KEYWORDS_PER_JOB", 1000)),
+        report_seconds=_f("REPORT_SECONDS", 30),
         results_per_keyword=max(1, _i("RESULTS_PER_KEYWORD", 10)),
         max_attempts=max(1, _i("MAX_ATTEMPTS", 3)),
         stale_seconds=max(30, _i("STALE_SECONDS", 600)),
