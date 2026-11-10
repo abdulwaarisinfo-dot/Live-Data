@@ -36,7 +36,7 @@ def main():
         start_status_server(board, s.port)
     orch = Orchestrator(s, store, serp, board, stop)
     if args.once:
-        orch.run_round()
+        orch.run_once()
     else:
         orch.run_forever()
 
