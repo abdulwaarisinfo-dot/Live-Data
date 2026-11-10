@@ -1,0 +1,21 @@
+services:
+  - type: worker
+    name: flintel-serp-workers
+    runtime: python
+    rootDir: flintel-serp-workers
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: MONGODB3
+        sync: false
+      - key: MONGODB_DB
+        sync: false
+      - key: MONGODB2_URI
+        sync: false
+      - key: MONGODB2_DB
+        sync: false
+      - key: RAPIDAPI_KEY
+        sync: false
